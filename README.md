@@ -1,4 +1,4 @@
-# rebelsaI_case_study
+# rebelsai_case_study
 
 (AI) Document Management Endpoints – a case study in scalable API design using FastAPI, Redis, Celery, OpenAI API, and postgresql.
 
