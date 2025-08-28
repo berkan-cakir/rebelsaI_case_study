@@ -1,11 +1,27 @@
 services:
   api:
-    build: ./api              # build context
-    container_name: api       # defines name of container
+    build: ./api                                                          # build context
+    container_name: api                                                   # defines name of container
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload     
     ports:
-      - "8000:8000"           # maps host port to container port
+      - "8000:8000"                                                       # maps host port to container port
+    depends_on:
+      - redis
     develop:
-      watch:                  # rebuilds container automatically if code is changed
+      watch:                                                              # rebuilds container automatically if code is changed
         - action: sync
-          path: ./api/app     # relative host path
-          target: /app        # path inside the container
+          path: ./api/app                                                 # relative host path
+          target: /app                                                    # path inside the container
+
+  worker:
+    build: ./api
+    container_name: worker
+    command: celery -A app.tasks worker --loglevel=info
+    depends_on:
+      - redis
+  
+  redis:
+    image: redis:7.2
+    container_name: redis
+    ports:
+      - "6379:6379"

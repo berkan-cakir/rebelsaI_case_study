@@ -3,3 +3,5 @@ uvicorn
 openai
 pydantic
 python-docx
+redis
+celery
