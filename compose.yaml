@@ -8,4 +8,4 @@ services:
       watch:                  # rebuilds container automatically if code is changed
         - action: sync
           path: ./api/app     # relative host path
-          target: /app/app    # path inside the container
+          target: /app        # path inside the container
