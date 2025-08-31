@@ -27,7 +27,7 @@ services:
       - "6379:6379"
 
   postgres:
-    image: postgres:15-alpine
+    image: postgres:15
     container_name: postgres
     environment:
       POSTGRES_USER: user
