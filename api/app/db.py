@@ -121,8 +121,8 @@ def get_folder_count(path):
             text("SELECT doc_count FROM folders WHERE path = :path"),
             {"path": path}
         )
-        row = result.fetchone()
-        return row['doc_count'] if row else 0
+        row = result.mappings().fetchone()
+        return row["doc_count"] if row else None
     
 # -- documents --
 
