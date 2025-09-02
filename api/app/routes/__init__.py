@@ -1,4 +1,5 @@
-from .document_classification import router as document_classification_router
+from fastapi import APIRouter
 from .folder_insights import router as folder_insights_router
 
-routers = [ document_classification_router, folder_insights_router]
+router = APIRouter()
+router.include_router(folder_insights_router, prefix="/folder-insights", tags=["Folder Insights"])
