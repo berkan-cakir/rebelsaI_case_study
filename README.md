@@ -25,7 +25,11 @@ Document classification analyses:
 
 ## Setup
 
-docker compose
+The API can be setup with a single command:
+
+```docker-compose up --build```
+
+After running the command, one can interact with the API through the fastAPI interactive docs by going to: ```http://127.0.0.1:8000/docs```
 
 ## Usage
 
