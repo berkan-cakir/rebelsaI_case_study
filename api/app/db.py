@@ -155,7 +155,7 @@ def get_documents_in_folder(path, limit=10):
             """),
             {"path_pattern": f"{path}%", "limit": limit}
         )
-        return result.fetchall()
+        return result.mappings().all()
     
 # -- tags --
 
