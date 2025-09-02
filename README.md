@@ -25,7 +25,7 @@ Document classification analyses:
 
 ## Setup
 
-The API can be setup with a single command:
+The API and related docker services can be setup with a single command:
 
 ```docker-compose up --build```
 
