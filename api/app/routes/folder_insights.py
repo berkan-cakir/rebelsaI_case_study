@@ -8,6 +8,7 @@ BASE_PATH = os.path.join(os.path.dirname(__file__), "Client Data")
 
 @router.get("/{folder_path:path}/count_files")
 async def folder_count(folder_path: str):
+    """Count .docx files in the specified folder and return the cached count or start a job."""
     try:
         full_path = os.path.normpath(os.path.join(BASE_PATH, folder_path))
         if not full_path.startswith(BASE_PATH):
@@ -29,6 +30,7 @@ async def folder_count(folder_path: str):
     
 @router.get("/{folder_path:path}/get_folder_files_metadata")
 async def get_file_metadata(folder_path: str, limit: int = 10):
+    """Retrieve cached metadata for files in the folder or start a job to insert metadata."""
     try:
         full_path = os.path.normpath(os.path.join(BASE_PATH, folder_path))
         if not full_path.startswith(BASE_PATH):
