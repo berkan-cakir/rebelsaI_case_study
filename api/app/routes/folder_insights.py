@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.db import get_folder_count, create_job, get_documents_in_folder
+from app.db import get_folder_count, create_job, get_documents_metadata_in_folder
 from app.tasks import update_folder_count, update_folder_files_metadata
 import os
 
@@ -27,7 +27,7 @@ async def folder_count(folder_path: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+        
 @router.get("/{folder_path:path}/get_folder_files_metadata")
 async def get_file_metadata(folder_path: str, limit: int = 10):
     """Retrieve cached metadata for files in the folder or start a job to insert metadata."""
@@ -38,7 +38,7 @@ async def get_file_metadata(folder_path: str, limit: int = 10):
         elif not os.path.exists(full_path) or not os.path.isdir(full_path):
             raise HTTPException(status_code=404, detail="Folder not found")
 
-        files = get_documents_in_folder(full_path, limit)
+        files = get_documents_metadata_in_folder(full_path, limit)
         if files:
             return {"folder_path": folder_path, "files": files}
 
