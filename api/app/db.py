@@ -5,6 +5,7 @@ DB_URL = os.getenv("DB_URL", "postgresql://user:password@postgres:5432/documents
 engine = create_engine(DB_URL)
 
 def init_db():
+    """Initialize the database with required tables and default tags."""
     try:
         with engine.begin() as connection:
             connection.execute(text("""CREATE TABLE IF NOT EXISTS jobs (
@@ -73,6 +74,7 @@ def init_db():
         raise
 # -- jobs --
 def create_job(status="PENDING", result=None):
+    """Create a new job and return its ID."""
     with engine.begin() as connection:
         result = connection.execute(
             text("INSERT INTO jobs (status, result) VALUES (:status, :result) RETURNING id"),
@@ -82,6 +84,7 @@ def create_job(status="PENDING", result=None):
         return job_id
 
 def update_job(job_id, status, result=None):
+    """Update the status and result of a job."""
     with engine.begin() as connection:
         connection.execute(
             text("UPDATE jobs SET status = :status, result = :result WHERE id = :job_id"),
@@ -89,6 +92,7 @@ def update_job(job_id, status, result=None):
         )
 
 def get_job(job_id):
+    """Retrieve job details by ID."""
     with engine.begin() as connection:
         result = connection.execute(
             text("SELECT * FROM jobs WHERE id = :job_id"),
@@ -97,6 +101,7 @@ def get_job(job_id):
         return result.fetchone()
 
 def get_job_status(job_id):
+    """Get the current status of a job."""
     job = get_job(job_id)
     if job:
         return job['status']
@@ -105,6 +110,7 @@ def get_job_status(job_id):
 # -- folders --
 
 def upsert_folder_count(path, doc_count, last_job_id):
+    """Insert or update the document count for a folder."""
     with engine.begin() as connection:
         connection.execute(
             text("""INSERT INTO folders (path, doc_count, last_scanned, last_job_id)
@@ -117,6 +123,7 @@ def upsert_folder_count(path, doc_count, last_job_id):
         )
 
 def get_folder_count(path):
+    """Retrieve the document count for a folder."""
     with engine.begin() as connection:
         result = connection.execute(
             text("SELECT doc_count FROM folders WHERE path = :path"),
@@ -128,6 +135,7 @@ def get_folder_count(path):
 # -- documents --
 
 def insert_document(job_id, path, filename, size_kb, modified):
+    """Insert a new document record."""
     with engine.begin() as connection:
         connection.execute(
             text("""INSERT INTO documents (job_id, path, filename, size_kb, modified)
@@ -141,6 +149,7 @@ def insert_document(job_id, path, filename, size_kb, modified):
         )
 
 def get_documents_in_folder(path, limit=10):
+    """Retrieve documents in a folder with their metadata and tags."""
     with engine.begin() as connection:
         result = connection.execute(
             text("""
@@ -161,6 +170,7 @@ def get_documents_in_folder(path, limit=10):
 # -- tags --
 
 def tag_document(document_id, tag_name):
+    """Associate a tag with a document."""
     with engine.begin() as connection:
         tag_result = connection.execute(
             text("SELECT id FROM tags WHERE name = :name"),
@@ -177,6 +187,7 @@ def tag_document(document_id, tag_name):
         )
 
 def get_tags_for_document(document_id):
+    """Retrieve tags associated with a document."""
     with engine.begin() as connection:
         result = connection.execute(
             text("""

@@ -8,4 +8,4 @@ app = FastAPI(title="Document Management API")
 def startup_event():
     init_db()
 
-app.include_router(router)
+app.include_router(router) # Split routes into separate files and include them here
