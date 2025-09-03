@@ -1,7 +1,9 @@
 services:
   api:
     build: ./api                                                          # build context
-    container_name: api                                                   # defines name of container
+    container_name: api
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}                                                  # defines name of container
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload     
     ports:
       - "8000:8000"                                                       # maps host port to container port
@@ -15,7 +17,9 @@ services:
 
   worker:
     build: ./api
-    container_name: worker
+    container_name: celery-worker
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     command: celery -A app.tasks worker --loglevel=info
     depends_on:
       - redis
