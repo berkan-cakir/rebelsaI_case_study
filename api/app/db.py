@@ -27,7 +27,8 @@ def init_db():
                                     path TEXT UNIQUE,
                                     filename VARCHAR(255),
                                     size_kb INT,
-                                    modified TIMESTAMP);
+                                    modified TIMESTAMP,
+                                    summary TEXT DEFAULT NULL);
                                     """))
             
             connection.execute(text("""CREATE TABLE IF NOT EXISTS tags (
@@ -143,7 +144,7 @@ def get_documents_in_folder(path, limit=10):
     with engine.begin() as connection:
         result = connection.execute(
             text("""
-                SELECT d.id, d.path, d.filename, d.size_kb, d.modified,
+                SELECT d.filename, d.size_kb, d.modified, d.summary,
                        ARRAY_AGG(t.name) AS tags
                 FROM documents d
                 LEFT JOIN document_tags dt ON d.id = dt.document_id
