@@ -40,6 +40,8 @@ See fastAPI interactive docs.
 
 Note that /folder-insights/{folder_path}/get_folder_files_metadata must be called before either Document Classification endpoint api endpoints.
 
+For the Document Classification endpoint to work, you will need to add a .env with OPENAI_API_KEY="sk-proj-XXXX" to root.
+
 ## Design
 
 ## Scalability Notes
