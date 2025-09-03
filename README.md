@@ -18,10 +18,11 @@ Document classification analyses:
 
 - Python
 - fastAPI
-- Redis Queue
+- Redis (Queue)
 - Celery
 - PostGreSQL
 - openAI API
+- sqlalchemy
 
 ## Setup
 
@@ -35,8 +36,21 @@ After running the command, one can interact with the API through the fastAPI int
 
 ## Usage
 
+See fastAPI interactive docs.
+
+Note that /folder-insights/{folder_path}/get_folder_files_metadata must be called before either Document Classification endpoint api endpoints.
+
 ## Design
 
 ## Scalability Notes
+
+## Limitations
+
+## Improvements
+
+- buckets for data
+- rate limiting
+- user privileges
+- kubernetes
 
 ## Conclusions / Case Study Notes
