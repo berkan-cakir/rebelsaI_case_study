@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.db import get_folder_count, create_job, get_documents_in_folder, insert_document
+from app.db import get_folder_count, create_job, get_documents_in_folder
 from app.tasks import update_folder_count, update_folder_files_metadata
 import os
 
