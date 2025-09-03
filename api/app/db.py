@@ -26,9 +26,9 @@ def init_db():
                                     id SERIAL PRIMARY KEY,
                                     job_id INT REFERENCES jobs(id) ON DELETE CASCADE,
                                     path TEXT UNIQUE,
-                                    filename VARCHAR(255),
-                                    size_kb INT,
-                                    modified TIMESTAMP,
+                                    filename VARCHAR(255) DEFAULT NULL,
+                                    size_kb INT DEFAULT NULL,
+                                    modified TIMESTAMP DEFAULT NULL,
                                     summary TEXT DEFAULT NULL);
                                     """))
             
@@ -72,6 +72,7 @@ def init_db():
     except Exception as e:
         print(f"Error initializing database: {e}")
         raise
+
 # -- jobs --
 def create_job(status="PENDING", result=None):
     """Create a new job and return its ID."""
@@ -148,7 +149,32 @@ def insert_document(job_id, path, filename, size_kb, modified):
             {"job_id": job_id, "path": path, "filename": filename, "size_kb": size_kb, "modified": modified}
         )
 
+def get_document_id_by_path(path):
+    """Retrieve the document ID by its path."""
+    with engine.begin() as connection:
+        result = connection.execute(
+            text("SELECT id FROM documents WHERE path = :path"),
+            {"path": path}
+        )
+        row = result.mappings().fetchone()
+        return row['id'] if row else None
+
 def get_documents_in_folder(path, limit=10):
+    """Retrieve documents in a folder."""
+    with engine.begin() as connection:
+        result = connection.execute(
+            text("""
+                SELECT d.filename
+                FROM documents d
+                WHERE d.path LIKE :path_pattern
+                GROUP BY d.id
+                ORDER BY d.modified DESC
+                LIMIT :limit"""),
+            {"path_pattern": f"{path}%", "limit": limit}
+        )
+        return result.mappings().all()
+
+def get_documents_metadata_in_folder(path, limit=10):
     """Retrieve documents in a folder with their metadata and tags."""
     with engine.begin() as connection:
         result = connection.execute(
@@ -161,22 +187,41 @@ def get_documents_in_folder(path, limit=10):
                 WHERE d.path LIKE :path_pattern
                 GROUP BY d.id
                 ORDER BY d.modified DESC
-                LIMIT :limit
-            """),
+                LIMIT :limit"""),
             {"path_pattern": f"{path}%", "limit": limit}
         )
         return result.mappings().all()
+
+def check_document_standard_metadata_exists(path):
+    """Check if a document has standard metadata (size and modified time)."""
+    with engine.begin() as connection:
+        result = connection.execute(
+            text("""
+                SELECT size_kb, modified
+                FROM documents
+                WHERE path = :path"""),
+            {"path": path}
+        )
+        row = result.mappings().fetchone()
+
+        if row is None:
+            return False
+        else:
+            return bool(row['size_kb'] is not None or row['modified'] is not None)
     
 # -- tags --
 
-def tag_document(document_id, tag_name):
+def insert_tag_document(document_id, tag_name):
     """Associate a tag with a document."""
     with engine.begin() as connection:
         tag_result = connection.execute(
-            text("SELECT id FROM tags WHERE name = :name"),
+            text("SELECT id FROM tags WHERE name ILIKE :name"),
             {"name": tag_name}
         )
-        tag_row = tag_result.fetchone()
+
+        tag_row = tag_result.mappings().fetchone()
+        print(f"Tag row for '{tag_name}': {tag_row}")  # Debugging line
+
         tag_id = tag_row['id']
         
         connection.execute(
@@ -186,16 +231,49 @@ def tag_document(document_id, tag_name):
             {"document_id": document_id, "tag_id": tag_id}
         )
 
-def get_tags_for_document(document_id):
-    """Retrieve tags associated with a document."""
+def check_document_tagged(path):
+    """Check if a document has any tags associated."""
     with engine.begin() as connection:
         result = connection.execute(
             text("""
-                SELECT t.name
-                FROM tags t
-                JOIN document_tags dt ON t.id = dt.tag_id
-                WHERE dt.document_id = :document_id
-            """),
-            {"document_id": document_id}
+                SELECT COUNT(*) AS tag_count
+                FROM documents d
+                JOIN document_tags dt ON d.id = dt.document_id
+                WHERE d.path = :path"""),
+            {"path": path}
+        ).scalar()
+
+        return bool(result > 0)
+
+def get_all_tags():
+    """Retrieve all available tags."""
+    with engine.begin() as connection:
+        result = connection.execute(text("SELECT name FROM tags"))
+        return [row['name'] for row in result.mappings()]
+    
+# -- summaries --
+
+def check_document_summarized(path):
+    """Check if a document has a summary."""
+    print(f"Checking if document is summarized: {path}")
+    with engine.begin() as connection:
+        result = connection.execute(
+            text("""
+                SELECT summary
+                FROM documents
+                WHERE path = :path"""),
+            {"path": path}
         )
-        return [row['name'] for row in result.fetchall()]
+        row = result.mappings().fetchone() 
+        return bool(row and row['summary'])    
+    
+def add_summary_for_document(path, summary):
+    """Add summary for a document."""
+    with engine.begin() as connection:
+        connection.execute(
+            text("""
+                UPDATE documents
+                SET summary = :summary
+                WHERE path = :path;"""),
+            {"summary": summary, "path": path}
+        )
