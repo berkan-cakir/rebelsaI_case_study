@@ -46,7 +46,7 @@ def extract_text_from_docx(file_path: str) -> str:
 
         # Extract paragraphs in order
         for para in doc.paragraphs:
-            text = clean_text(para.text)
+            text = clean_paragraph_text(para.text)
             if text:
                 style = para.style.name if para.style else ""
                 if style.startswith("Heading"):
@@ -60,7 +60,7 @@ def extract_text_from_docx(file_path: str) -> str:
         for table in doc.tables:
             rows = []
             for row in table.rows:
-                cells = [clean_text(cell.text) for cell in row.cells]
+                cells = [clean_paragraph_text(cell.text) for cell in row.cells]
                 rows.append(cells)
             if rows:
                 header = " | ".join(rows[0])
