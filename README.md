@@ -16,13 +16,15 @@ Document classification analyses:
 
 ## Techstack
 
-- Python
-- fastAPI
-- Redis (Queue)
-- Celery
-- PostGreSQL
-- openAI API
-- sqlalchemy
+- Python – primary programming language
+- FastAPI – web framework for building the API
+- Uvicorn – ASGI server for running FastAPI
+- Redis – message broker for Celery task queue
+- Celery – asynchronous task/job queue
+- PostgreSQL – relational database for metadata and job persistence
+- SQLAlchemy – ORM / database toolkit (interface to PostgreSQL)
+- OpenAI API – LLM-powered document classification & summarization
+- Docker & Docker Compose – containerization & local orchestration
 
 ## Setup
 
