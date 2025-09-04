@@ -34,6 +34,8 @@ After running the command, one can interact with the API through the fastAPI int
 
 ```http://127.0.0.1:8000/docs```
 
+If any errors show up during initialization, close docker using ctrl+c and run docker-compose up command again.
+
 ## Usage
 
 See fastAPI interactive docs.
@@ -77,6 +79,7 @@ This project is designed around scalable, fault tolerant, asynchronous document 
 
 ## Improvements (outside scope for case study)
 
+- 
 - minIO buckets for client data
 - Rate limiting
 - User privileges
