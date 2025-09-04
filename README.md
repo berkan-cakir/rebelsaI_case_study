@@ -44,15 +44,43 @@ For the Document Classification endpoint to work, you will need to add a .env wi
 
 ## Design
 
+This project is designed around scalable, fault tolerant, asynchronous document processing pipeline. The goal is to support ingestion, metadata extraction, and analyses through tagging and summurization of large sets of (docx) documents.
+
+# Components
+- FastAPI (API layer)
+    - Provides rest endpoints for folder/document operations.
+    - Handles incoming requests and immediately responds to clients without waiting for long-running jobs.
+    - Delegates heavy work (metadata extraction, LLM calls) to celery workers via Redis.
+- Celery (Task queue)
+    - Executes background jobs asynchronously.
+    - Supports parallelism by running multiple workers (by increasing the number of celery worker services via docker compose).
+    - Can support jobs to be retried on failure and status to be tracked.
+- Redis (Message broker)
+    - Serves as the broker between FastAPI and Celery
+    - Stores queued tasks until a celery worker picks them up.
+- PostgreSQL (Database)
+    - Persists document metadata.
+    - Stores job history and processing status.
+- OpenAI API (LLM integration)
+    - Used for document processing.
+    - Called via celery task workers to be able to retry requests and parallize.
+- Docker + Docker Compose
+    - Each service (API, celery worker, Redis, Postgres) runs in its own container.
+    - Compose manages multi-container locally.
+    - Ready to be scaled horizontally with Kubernetes and Ngninx load balancer for production.
 ## Scalability Notes
+- Asynchronous task queue - Celery ensures long-running LLM calls don’t block API responses.
+- Parallelism - Multiple Celery workers process documents in parallel. Which can be scaled automatically with Kubernetes during high load/traffic.
+- Horizontal scaling - FastAPI and Celery workers can be replicated; load balancer distributes traffic.
+- Caching and Idempotency - Database prevents duplicate work (e.g., don’t re-summarize documents that already have summaries).
+- Future-proof - Can scale from Docker Compose (dev) - Kubernetes (prod).
 
-## Limitations
+## Improvements (outside scope for case study)
 
-## Improvements
-
-- buckets for data
-- rate limiting
-- user privileges
-- kubernetes
+- minIO buckets for client data
+- Rate limiting
+- User privileges
+- Kubernetes & Nnginx load balancer for horizontal scalling
 
 ## Conclusions / Case Study Notes
+
