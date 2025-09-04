@@ -79,11 +79,7 @@ This project is designed around scalable, fault tolerant, asynchronous document 
 
 ## Improvements (outside scope for case study)
 
-- 
 - minIO buckets for client data
 - Rate limiting
 - User privileges
 - Kubernetes & Nnginx load balancer for horizontal scalling
-
-## Conclusions / Case Study Notes
-
