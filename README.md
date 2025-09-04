@@ -40,11 +40,11 @@ If any errors show up during initialization, close docker using ctrl+c and run d
 
 ## Usage
 
-See fastAPI interactive docs. Path for client data to be used as input for the interactive docs "Company A/Project 1".
+See fastAPI interactive docs; path for client data to be used as input for the interactive docs "Company X/Project X" (e.g. Company A/Project 1).
 
 Note that /folder-insights/{folder_path}/get_folder_files_metadata must be called before either Document Classification endpoint api endpoints.
 
-For the Document Classification endpoint to work, you will need to add a .env with OPENAI_API_KEY="sk-proj-XXXX" to root.
+For the Document Classification endpoint to work, you will need to add a .env with OPENAI_API_KEY="sk-proj-XXXX" to the root folder.
 
 ## Design
 
@@ -85,3 +85,4 @@ This project is designed around scalable, fault tolerant, asynchronous document 
 - Rate limiting
 - User privileges
 - Kubernetes & Nnginx load balancer for horizontal scalling
+- Unittests
