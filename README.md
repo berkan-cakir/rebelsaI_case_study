@@ -38,7 +38,7 @@ If any errors show up during initialization, close docker using ctrl+c and run d
 
 ## Usage
 
-See fastAPI interactive docs.
+See fastAPI interactive docs. Path for client data to be used as input for the interactive docs "Company A/Project 1".
 
 Note that /folder-insights/{folder_path}/get_folder_files_metadata must be called before either Document Classification endpoint api endpoints.
 
