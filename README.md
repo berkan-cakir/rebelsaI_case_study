@@ -77,7 +77,7 @@ This project is designed around scalable, fault tolerant, asynchronous document 
 - Parallelism - Multiple Celery workers process documents in parallel. Which can be scaled automatically with Kubernetes during high load/traffic.
 - Horizontal scaling - FastAPI and Celery workers can be replicated; load balancer distributes traffic.
 - Caching and Idempotency - Database prevents duplicate work (e.g., don’t re-summarize documents that already have summaries).
-- Future-proof - Can scale from Docker Compose (dev) - Kubernetes (prod).
+- Future-proof - Can scale from Docker Compose (dev) to Kubernetes (prod).
 
 ## Improvements (outside scope for case study)
 
