@@ -79,7 +79,7 @@ This project is designed around scalable, fault tolerant, asynchronous document 
 - Caching and Idempotency - Database prevents duplicate work (e.g., don’t re-summarize documents that already have summaries).
 - Future-proof - Can scale from Docker Compose (dev) to Kubernetes (prod).
 
-## Improvements (outside scope for case study)
+## Improvements (out of scope for case study)
 
 - minIO buckets for client data
 - Rate limiting
